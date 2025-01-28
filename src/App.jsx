@@ -94,25 +94,48 @@ const App = () => {
     ]);
 
     const handleAddFighter = (newFighter) => {
+      if (money < newFighter.price) {
+        console.log("Not Enough Money")
+        return;
+      }
       const newTeamArray = [...team, newFighter];
       setTeam(newTeamArray);
+
       const updatedZombieFighters = zombieFighters.filter(
         (fighter) => fighter.id !== newFighter.id
       );
       setZombieFighters(updatedZombieFighters);
 
-      const newMoneyArray =  money - newFighter.price;
+      const newMoneyArray = money - newFighter.price
         setMoney(newMoneyArray)
-    }
+    };
+    
+    const chooseTeam = team.length === 0 ? <p>Pick some team memebers</p> : null;
 
+    const totalStrength = team.reduce((total, fighter) => total + fighter.strength,0)
+
+    const totalAgility = team.reduce((total,fighter) => total + fighter.agility,0)
+
+    const handleRemoveFighter = (loseFighter) => {
+      const updatedTeamArray = team.filter(
+        (fighter) => fighter.id !== loseFighter.id
+      );
+      setTeam(updatedTeamArray);
+  
+      const newZombieArray = [...zombieFighters, loseFighter];
+      setZombieFighters(newZombieArray);
+  
+      const newMoney = money + loseFighter.price;
+      setMoney(newMoney);
+    };
 
   return (
     <>
     <h1>Zombie Fighters</h1>
     <h2>Money:${money}</h2>
-    <h2>Team Strength:</h2>
-    <h2>Team Agility:</h2>
-    <h2>Team:</h2>
+    <h2>Team Strength:{totalStrength}</h2>
+    <h2>Team Agility:{totalAgility}</h2>
+    <h2>Team:{chooseTeam}</h2>
     <ul>
         {team.map((fighter) => (
           <li key={fighter.id}>
@@ -121,7 +144,7 @@ const App = () => {
             <p>Price: ${fighter.price}</p>
             <p>Strength: ${fighter.strength}</p>
             <p>Agiltiy: ${fighter.agility}</p>
-
+            <button onClick={() => handleRemoveFighter(fighter)}>Delete</button>
           </li>
         ))}
         </ul> 
